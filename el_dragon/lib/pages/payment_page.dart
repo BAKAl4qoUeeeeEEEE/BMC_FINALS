@@ -42,7 +42,7 @@ class _PaymentPageState extends State<PaymentPage> {
       final supabase = Supabase.instance.client;
 
       final response = await supabase.functions.invoke(
-        'create-xendit-checkout',
+        'create-invoice',
         body: {
           'items': widget.cart.entries.map((entry) {
             return {'product_id': entry.key, 'quantity': entry.value};
@@ -73,11 +73,18 @@ class _PaymentPageState extends State<PaymentPage> {
     } catch (e) {
       if (!mounted) return;
 
+      final errorDetails = e.toString();
+      final message =
+          errorDetails.contains('status: 0') ||
+              errorDetails.contains('status 0')
+          ? 'Hindi maabot ang Supabase checkout. Tingnan kung may internet, '
+              'at kung naka-deploy ang create-invoice function. '
+                'Details: $errorDetails'
+          : 'Payment error: $errorDetails';
+      debugPrint('Xendit checkout error: $errorDetails');
+
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Payment error: $e'),
-          duration: const Duration(seconds: 5),
-        ),
+        SnackBar(content: Text(message), duration: const Duration(seconds: 8)),
       );
     } finally {
       if (mounted) {

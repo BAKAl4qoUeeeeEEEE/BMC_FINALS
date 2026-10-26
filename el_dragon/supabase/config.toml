@@ -1,0 +1,7 @@
+[functions.create-invoice]
+# Guest checkout: the Flutter app calls this with the Supabase anon key.
+verify_jwt = false
+
+[functions.xendit-webhook]
+# Xendit authenticates webhook requests using XENDIT_WEBHOOK_TOKEN.
+verify_jwt = false
